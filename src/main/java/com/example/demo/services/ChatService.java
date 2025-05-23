@@ -1,11 +1,15 @@
 package com.example.demo.services;
 
 import com.example.demo.DTO.LastChatDTO;
+import com.example.demo.DTO.MessageDTO;
+import com.example.demo.DTO.MessageResponseDTO;
 import com.example.demo.DTO.StatusResponseDTO;
 import com.example.demo.entity.Chat;
+import com.example.demo.entity.Message;
 import com.example.demo.entity.User;
 import com.example.demo.models.Status;
 import com.example.demo.repository.ChatRepository;
+import com.example.demo.repository.MessageRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -23,6 +27,9 @@ public class ChatService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     private String getCurrentUserEmail() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -61,5 +68,24 @@ public class ChatService {
                     .build();
         }).collect(Collectors.toList());
 
+    }
+
+    public MessageResponseDTO processMessage(MessageDTO messageDTO) {
+        Optional<Chat> chat = chatRepository.findById(messageDTO.getChatId());
+        Optional<User> sender = userRepository.findById(messageDTO.getSenderId());
+        Message newMessge = Message.builder()
+                .chat(chat.get())
+                .content(messageDTO.getMessage())
+                .read(false)
+                .user(sender.get())
+                .build();
+        messageRepository.save(newMessge);
+        return MessageResponseDTO.builder()
+                .id(newMessge.getId())
+                .message(newMessge.getContent())
+                .timestamp(newMessge.getTimestamp())
+                .senderId(sender.get().getId())
+                .receivers(List.of(chat.get().getUser1().getId(),chat.get().getUser2().getId()))
+                .build();
     }
 }

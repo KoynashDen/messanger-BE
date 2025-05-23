@@ -33,6 +33,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST,"/auth/confirmation").permitAll()
                         .requestMatchers(HttpMethod.POST,"/auth/password/request").permitAll()
                         .requestMatchers(HttpMethod.POST,"/auth/password/confirm").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
