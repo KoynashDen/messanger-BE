@@ -28,11 +28,7 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST,"/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/auth/confirmation").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/auth/password/request").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/auth/password/confirm").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
