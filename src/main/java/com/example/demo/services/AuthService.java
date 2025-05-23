@@ -93,20 +93,20 @@ public class AuthService {
 
     }
 
-    public String loginUser(LoginDTO loginDTO) throws Exception {
+    public LoginResponseDTO loginUser(LoginDTO loginDTO) throws Exception {
         Optional<User> existingUser = userRepository.findByEmail(loginDTO.getEmail());
         if (existingUser.isEmpty()) {
-            throw new Exception("User not found");
+            return new LoginResponseDTO(Status.FAILED, null);
         }
         if(!passwordEncoder.matches(loginDTO.getPassword(),existingUser.get().getPassword())){
-            throw new Exception("Wrong password");
+            return new LoginResponseDTO(Status.FAILED, null);
         }
 
         if(!existingUser.get().isVerified()){
-            throw new Exception("Confirm your email");
+            return new LoginResponseDTO(Status.FAILED, null);
         }
+        return new LoginResponseDTO(Status.OK, jwtUtil.generateToken(String.valueOf(existingUser.get().getId()),existingUser.get().getEmail(), Constants.TOKEN_EXPIRES_IN));
 
-        return jwtUtil.generateToken(String.valueOf(existingUser.get().getId()),existingUser.get().getEmail(), Constants.TOKEN_EXPIRES_IN);
 
     }
 
