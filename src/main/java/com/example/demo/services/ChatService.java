@@ -48,27 +48,33 @@ public class ChatService {
         return chatRepository.save(new Chat(currentUser.get(), companionUser.get()));
     }
 
-    public Object getMyLastChats(){
+    public Object getMyLastChats(String search) {
         Optional<User> currentUser = userRepository.findByEmail(getCurrentUserEmail());
         if (currentUser.isEmpty()) {
             return new StatusResponseDTO(Status.FAILED, "User not found");
         }
         List<Chat> myChats = chatRepository.findByUser1OrUser2(currentUser.get(), currentUser.get());
 
-        return myChats.stream().map(Chat->{
-            String logo = !Chat.getUser1().equals(currentUser.get())?Chat.getUser1().getLogo():Chat.getUser2().getLogo();
-            String firstName = !Chat.getUser1().equals(currentUser.get())?Chat.getUser1().getName():Chat.getUser2().getName();
-            String lastName = !Chat.getUser1().equals(currentUser.get())?Chat.getUser1().getLastName():Chat.getUser2().getLastName();
+        String searchLower = search == null ? "" : search.toLowerCase();
 
-            return LastChatDTO.builder()
-                    .logo(logo)
-                    .userFirstName(firstName)
-                    .userLastName(lastName)
-                    .chatId(Chat.getId())
-                    .build();
-        }).collect(Collectors.toList());
-
+        return myChats.stream()
+                .filter(chat -> {
+                    User otherUser = !chat.getUser1().equals(currentUser.get()) ? chat.getUser1() : chat.getUser2();
+                    return otherUser.getName().toLowerCase().contains(searchLower) ||
+                            otherUser.getLastName().toLowerCase().contains(searchLower);
+                })
+                .map(chat -> {
+                    User otherUser = !chat.getUser1().equals(currentUser.get()) ? chat.getUser1() : chat.getUser2();
+                    return LastChatDTO.builder()
+                            .logo(otherUser.getLogo())
+                            .userFirstName(otherUser.getName())
+                            .userLastName(otherUser.getLastName())
+                            .chatId(chat.getId())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
+
 
     public MessageResponseDTO processMessage(MessageDTO messageDTO) {
         Optional<Chat> chat = chatRepository.findById(messageDTO.getChatId());

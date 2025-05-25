@@ -17,8 +17,10 @@ public class ChatController {
     }
 
     @GetMapping("/chats")
-    public Object getMyChats(){
-        return chatService.getMyLastChats();
+    public Object getMyChats(@RequestParam String search){
+        return chatService.getMyLastChats(search);
     }
+
+
 
 }

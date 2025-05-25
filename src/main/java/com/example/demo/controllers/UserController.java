@@ -1,12 +1,11 @@
 package com.example.demo.controllers;
 
+import com.example.demo.DTO.CreateUserDTO;
 import com.example.demo.entity.User;
 import com.example.demo.services.AuthService;
 import com.example.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,7 +21,12 @@ public class UserController {
     }
 
     @GetMapping("/without-chat")
-    public List<User> getUsersWithoutChat() {
-        return userService.getUsersWithoutChat();
+    public List<User> getUsersWithoutChat(@RequestParam String search) {
+        return userService.getUsersWithoutChat(search);
+    }
+
+    @PutMapping("/profile")
+    public User updateProfile(@ModelAttribute CreateUserDTO user) throws Exception {
+        return userService.updateProfile(user);
     }
 }
