@@ -1,5 +1,6 @@
 package com.example.demo.DTO;
 
+import com.example.demo.entity.User;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -20,7 +21,8 @@ public class MessageResponseDTO {
     private long id;
     private String message;
     private long senderId;
-
+    private User user;
+    private long chatId;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

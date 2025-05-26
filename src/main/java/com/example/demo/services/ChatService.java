@@ -99,6 +99,8 @@ public class ChatService {
                 .timestamp(newMessge.getTimestamp())
                 .senderId(sender.get().getId())
                 .receivers(List.of(chat.get().getUser1().getId(),chat.get().getUser2().getId()))
+                .user(sender.get())
+                .chatId(chat.get().getId())
                 .build();
     }
 
