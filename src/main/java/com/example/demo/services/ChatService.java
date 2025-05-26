@@ -70,9 +70,9 @@ public class ChatService {
                     .userFirstName(firstName)
                     .userLastName(lastName)
                     .chatId(Chat.getId())
-                    .lastMessage(lastMessage.get().getContent())
-                    .lastMessageIsRead(lastMessage.get().isRead())
-                    .lastMessageTime(lastMessage.get().getTimestamp())
+                    .lastMessage(lastMessage.isPresent()?lastMessage.get().getContent():"")
+                    .lastMessageIsRead(lastMessage.isPresent()?lastMessage.get().isRead():false)
+                    .lastMessageTime(lastMessage.isPresent()?lastMessage.get().getTimestamp():null)
 
 
                     .build();
