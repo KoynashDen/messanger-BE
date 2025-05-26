@@ -97,6 +97,6 @@ public class ChatService {
 
 
     public List<Message> getAllMessages(Long chatId) {
-        return messageRepository.findAllByChatId(chatId);
+        return messageRepository.findAllByChatId(chatId).stream().peek(message -> message.setChat(null)).collect(Collectors.toList());
     }
 }
