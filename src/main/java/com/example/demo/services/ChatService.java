@@ -62,12 +62,19 @@ public class ChatService {
             String logo = !Chat.getUser1().equals(currentUser.get())?Chat.getUser1().getLogo():Chat.getUser2().getLogo();
             String firstName = !Chat.getUser1().equals(currentUser.get())?Chat.getUser1().getName():Chat.getUser2().getName();
             String lastName = !Chat.getUser1().equals(currentUser.get())?Chat.getUser1().getLastName():Chat.getUser2().getLastName();
+            Optional<Message> lastMessage = messageRepository.findFirstByChatIdOrderByTimestampDesc(Chat.getId());
+
 
             return LastChatDTO.builder()
                     .logo(logo)
                     .userFirstName(firstName)
                     .userLastName(lastName)
                     .chatId(Chat.getId())
+                    .lastMessage(lastMessage.get().getContent())
+                    .lastMessageIsRead(lastMessage.get().isRead())
+                    .lastMessageTime(lastMessage.get().getTimestamp())
+
+
                     .build();
         }).collect(Collectors.toList());
 
