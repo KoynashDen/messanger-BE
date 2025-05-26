@@ -2,8 +2,10 @@ package com.example.demo.services;
 
 import com.example.demo.DTO.MessageDTO;
 import com.example.demo.DTO.MessageResponseDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -19,12 +21,17 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     private final JwtUtil jwtUtil;
     private ChatService chatService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+
+    private ObjectMapper mapper;
+
     private static final Map<WebSocketSession, Long> userSessions = new ConcurrentHashMap<>();
 
-    public MyWebSocketHandler(JwtUtil jwtUtil,ChatService chatService) {
+    public MyWebSocketHandler(JwtUtil jwtUtil,ChatService chatService, ObjectMapper objectMapper) {
         this.jwtUtil = jwtUtil;
         this.chatService = chatService;
+        this.mapper = objectMapper;
+
     }
 
     @Override
@@ -46,7 +53,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
-        MessageDTO newMessageDTO = objectMapper.readValue(message.getPayload(), MessageDTO.class);
+        MessageDTO newMessageDTO = mapper.readValue(message.getPayload(), MessageDTO.class);
         newMessageDTO.setSenderId(userSessions.get(session));
         MessageResponseDTO messageResponseDTO = chatService.processMessage(newMessageDTO);
         List<WebSocketSession> matchingSession = userSessions.entrySet().stream()
@@ -55,7 +62,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 .collect(Collectors.toList());
         matchingSession.forEach(k -> {
             try {
-                k.sendMessage(new TextMessage(objectMapper.writeValueAsString(messageResponseDTO)));
+                k.sendMessage(new TextMessage(mapper.writeValueAsString(messageResponseDTO)));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

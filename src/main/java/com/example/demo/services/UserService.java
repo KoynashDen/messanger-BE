@@ -26,25 +26,9 @@ public class UserService {
         return userRepository.findByEmail(getCurrentUserEmail()).get();
     }
 
-    public List<User> getUsersWithoutChat(String search) {
-        Optional<User> userOpt = userRepository.findByEmail(getCurrentUserEmail());
-        if (userOpt.isEmpty()) {
-            throw new RuntimeException("Current user not found");
-        }
-        Long currentUserId = userOpt.get().getId();
-
-        List<User> usersWithoutChat = userRepository.findUsersWithoutChatWith(currentUserId);
-
-        if (search == null || search.isBlank()) {
-            return usersWithoutChat;
-        }
-
-        String searchLower = search.toLowerCase();
-
-        return usersWithoutChat.stream()
-                .filter(u -> u.getName().toLowerCase().contains(searchLower)
-                        || u.getLastName().toLowerCase().contains(searchLower))
-                .collect(Collectors.toList());
+    public List<User> getUsersWithoutChat() {
+        Optional<User> user = userRepository.findByEmail(getCurrentUserEmail());
+        return userRepository.findUsersWithoutChatWith(user.get().getId());
     }
 
 

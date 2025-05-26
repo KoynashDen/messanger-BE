@@ -23,5 +23,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "  WHERE c.user1.id = :currentUserId OR c.user2.id = :currentUserId" +
             ")")
     List<User> findUsersWithoutChatWith(@Param("currentUserId") Long currentUserId);
-
 }

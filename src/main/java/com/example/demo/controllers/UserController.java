@@ -21,8 +21,8 @@ public class UserController {
     }
 
     @GetMapping("/without-chat")
-    public List<User> getUsersWithoutChat(@RequestParam String search) {
-        return userService.getUsersWithoutChat(search);
+    public List<User> getUsersWithoutChat() {
+        return userService.getUsersWithoutChat();
     }
 
     @PutMapping("/profile")

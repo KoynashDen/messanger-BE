@@ -1,5 +1,9 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +19,14 @@ import java.time.LocalDateTime;
 @Builder
 public class Message {
 
+    public Message(Chat chat, User user, String content, LocalDateTime timestamp, boolean read) {
+        this.chat = chat;
+        this.user = user;
+        this.content = content;
+        this.timestamp = timestamp;
+        this.isRead = read;
+    }
+
     @Id
     @GeneratedValue
     private Long id;
@@ -29,7 +41,9 @@ public class Message {
 
     private String content;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timestamp = LocalDateTime.now();
 
-    private boolean read = false;
+    private boolean isRead = false;
 }
